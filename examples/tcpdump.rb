@@ -1,4 +1,4 @@
-dev = "eth1"
+dev = (ARGV.empty?) ? "eth1" : ARGV[0]
 cap = Pcap::Capture.open_live(dev, 1500)
 
 cap.setfilter("icmp", true)
