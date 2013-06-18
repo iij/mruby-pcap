@@ -42,10 +42,10 @@ pcap_s_lookupdev(mrb_state *mrb, mrb_value self)
 
   dev = pcap_lookupdev(pcap_errbuf);
   if (dev == NULL) {
-    mrb_raisef(mrb, E_RUNTIME_ERROR, "%s", pcap_errbuf);
+    mrb_raise(mrb, E_RUNTIME_ERROR, pcap_errbuf);
   }
 
-  return mrb_str_new(mrb, dev, strlen(dev));
+  return mrb_str_new_cstr(mrb, dev);
 }
 
 static mrb_value
@@ -58,7 +58,7 @@ pcap_s_lookupnet(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "s", &cdev);
   if (pcap_lookupnet(cdev, &net, &mask, pcap_errbuf) == -1)
-    mrb_raisef(mrb, E_RUNTIME_ERROR, "%s", pcap_errbuf);
+    mrb_raise(mrb, E_RUNTIME_ERROR, pcap_errbuf);
 
   rval = mrb_ary_new(mrb);
   inet_ntop(AF_INET, &net, buf_str, sizeof(buf_str));
@@ -120,7 +120,7 @@ capture_open_live(mrb_state *mrb, mrb_value self)
   /* invoke pcap_open_live */
   pcap = pcap_open_live(cdev, snaplen, cpromisc, to_ms, pcap_errbuf);
   if (pcap == NULL)
-    mrb_raisef(mrb, E_RUNTIME_ERROR, "%s", pcap_errbuf);
+    mrb_raise(mrb, E_RUNTIME_ERROR, pcap_errbuf);
   if (pcap_lookupnet(cdev, &net, &netmask, pcap_errbuf) == -1)
     netmask = 0;
 
@@ -199,7 +199,7 @@ capture_setfilter(mrb_state *mrb, mrb_value self)
   char *filter_str;
   int nargs;
 
-  nargs = mrb_get_args(mrb, "S|o", &filter_str, &optimize);
+  nargs = mrb_get_args(mrb, "S|o", &filter, &optimize);
   if (nargs != 2)
     optimize = mrb_true_value();
   if (mrb_type(optimize) != MRB_TT_TRUE &&
@@ -213,9 +213,9 @@ capture_setfilter(mrb_state *mrb, mrb_value self)
   if (pcap_compile(cap->pcap, &program, filter_str,
 		   mrb_type(optimize) == MRB_TT_TRUE ? 1 : 0,
 		   cap->netmask) < 0)
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "setfilter: %s", pcap_geterr(cap->pcap));
+    mrb_raisef(mrb, E_ARGUMENT_ERROR, "setfilter: %S", mrb_str_new_cstr(mrb, pcap_geterr(cap->pcap)));
   if (pcap_setfilter(cap->pcap, &program) < 0)
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "setfilter: %s", pcap_geterr(cap->pcap));
+    mrb_raisef(mrb, E_ARGUMENT_ERROR, "setfilter: %S", mrb_str_new_cstr(mrb, pcap_geterr(cap->pcap)));
 
   return mrb_nil_value();
 }
