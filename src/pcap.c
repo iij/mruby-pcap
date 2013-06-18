@@ -9,11 +9,13 @@
 #include "mruby/string.h"
 #include "mruby/array.h"
 #include "mruby/class.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <string.h>
 #include <stdlib.h>
-#include <pcap/pcap.h>
-#include <netinet/ip.h>
-#include <arpa/inet.h>
+#include <pcap.h>
 
 
 #define DEFAULT_SNAPLEN	68
