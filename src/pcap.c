@@ -18,16 +18,16 @@
 #include <pcap.h>
 
 
-#define DEFAULT_SNAPLEN	68
-#define DEFAULT_PROMISC	1
-#define DEFAULT_TO_MS	1000
+#define DEFAULT_SNAPLEN 68
+#define DEFAULT_PROMISC 1
+#define DEFAULT_TO_MS   1000
 
 struct capture_object {
-  pcap_t	*pcap;
-  bpf_u_int32	netmask;
-  int		dl_type;
-  mrb_state	*mrb;
-  mrb_value	cap_data;
+  pcap_t        *pcap;
+  bpf_u_int32   netmask;
+  int           dl_type;
+  mrb_state     *mrb;
+  mrb_value     cap_data;
 };
 
 static void free_capture(mrb_state *, void *);
@@ -131,7 +131,7 @@ capture_open_live(mrb_state *mrb, mrb_value self)
   cap->dl_type = pcap_datalink(pcap);
 
   return mrb_obj_value(Data_Wrap_Struct(mrb, mrb_class_ptr(self),
-					&mrb_pcap_type, (void*)cap));
+                                        &mrb_pcap_type, (void*)cap));
 }
 
 static void
@@ -147,9 +147,9 @@ handler(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char *data)
   rval = mrb_ary_new(cap->mrb);
   timestamp[0] = '\0';
   snprintf(timestamp, sizeof(timestamp)-1, "%ld.%ld",
-	   (long)pkthdr->ts.tv_sec, (long)pkthdr->ts.tv_usec);
+           (long)pkthdr->ts.tv_sec, (long)pkthdr->ts.tv_usec);
   mrb_ary_push(cap->mrb, rval,
-	       mrb_str_new(cap->mrb, timestamp, strlen(timestamp)));
+               mrb_str_new(cap->mrb, timestamp, strlen(timestamp)));
   mrb_ary_push(cap->mrb, rval, mrb_fixnum_value(pkthdr->caplen));
   mrb_ary_push(cap->mrb, rval, mrb_fixnum_value(pkthdr->len));
   mrb_ary_push(cap->mrb, rval, mrb_str_new(cap->mrb, data_p, pkthdr->caplen));
@@ -178,10 +178,10 @@ capture(mrb_state *mrb, mrb_value self)
       FD_SET(fd, &rset);
       nfd = select(fd+1, &rset, NULL, NULL, NULL);
       if (nfd != 0) {
-	pcap_dispatch(cap->pcap, 1, handler, (u_char *)cap);
-	break;
+        pcap_dispatch(cap->pcap, 1, handler, (u_char *)cap);
+        break;
       } else {
-	continue;
+        continue;
       }
     } while (1);
   }
@@ -211,8 +211,8 @@ capture_setfilter(mrb_state *mrb, mrb_value self)
 
   filter_str = mrb_str_to_cstr(mrb, filter);
   if (pcap_compile(cap->pcap, &program, filter_str,
-		   mrb_type(optimize) == MRB_TT_TRUE ? 1 : 0,
-		   cap->netmask) < 0)
+                   mrb_type(optimize) == MRB_TT_TRUE ? 1 : 0,
+                   cap->netmask) < 0)
     mrb_raisef(mrb, E_ARGUMENT_ERROR, "setfilter: %S", mrb_str_new_cstr(mrb, pcap_geterr(cap->pcap)));
   if (pcap_setfilter(cap->pcap, &program) < 0)
     mrb_raisef(mrb, E_ARGUMENT_ERROR, "setfilter: %S", mrb_str_new_cstr(mrb, pcap_geterr(cap->pcap)));
@@ -249,9 +249,9 @@ mrb_mruby_pcap_gem_init(mrb_state *mrb)
   pcap = mrb_define_module(mrb, "Pcap");
 
   mrb_define_module_function(mrb, pcap, "lookupdev", pcap_s_lookupdev,
-			     ARGS_NONE());
+                             ARGS_NONE());
   mrb_define_module_function(mrb, pcap, "lookupnet", pcap_s_lookupnet,
-			     ARGS_REQ(1));
+                             ARGS_REQ(1));
 
   mrb_define_const(mrb, pcap, "DLT_NULL", mrb_fixnum_value(DLT_NULL));
   mrb_define_const(mrb, pcap, "DLT_EN10MB", mrb_fixnum_value(DLT_EN10MB));
@@ -262,7 +262,7 @@ mrb_mruby_pcap_gem_init(mrb_state *mrb)
 
   capt = mrb_define_class_under(mrb, pcap, "Capture", mrb->object_class);
   mrb_define_singleton_method(mrb, (struct RObject*)capt, "open_live",
-  			      capture_open_live, ARGS_ANY());
+                              capture_open_live, ARGS_ANY());
   mrb_define_method(mrb, capt, "capture", capture, ARGS_NONE());
   mrb_define_method(mrb, capt, "setfilter", capture_setfilter, ARGS_ANY());
   mrb_define_method(mrb, capt, "datalink", capture_datalink, ARGS_NONE());
