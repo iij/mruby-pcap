@@ -1,7 +1,27 @@
-mruby-pcap
-==========
+# mruby-pcap
 
 mruby interface to libpcap Packet Capture library.
+
+## API
+
+- ``Pcap`` module
+  - ``Pcap.lookupdev`` -> String
+      - returns a network device name suitable for use with
+        ``Pcap::Capture.open_live`` and ``Pcap::lookupnet``.
+  - ``Pcap.lookupnet``
+  - ``Pcap::DLT_NULL`` ``Pcap::DLT_EN10MB`` ``Pcap::DLT_PPP`` ``Pcap::RAW``
+- ``Pcap::Capture`` class
+  - .open\_live(device, snaplen, promisc, to\_ms)
+      - creates a Capture object to capture packets on live.
+  - #capture
+  - #close
+    - closes sockets to be used to capture packets.
+  - #datalink
+    - returns the link layer type.
+  - #inject(str)
+    - injects a raw packet.
+  - #setfilter(str)
+    - sets a BPF filter program.
 
 
 ## License
