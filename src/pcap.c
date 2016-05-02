@@ -260,9 +260,9 @@ mrb_mruby_pcap_gem_init(mrb_state *mrb)
   struct RClass *pcap, *capt;
 
   pcap = mrb_define_module(mrb, "Pcap");
-  mrb_define_module_function(mrb, pcap, "lookupdev", mrb_pcap_s_lookupdev, ARGS_NONE());
+  mrb_define_module_function(mrb, pcap, "lookupdev", mrb_pcap_s_lookupdev, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, pcap, "lookupnet", pcap_s_lookupnet,
-                             ARGS_REQ(1));
+                             MRB_ARGS_REQ(1));
 
   mrb_define_const(mrb, pcap, "DLT_NULL", mrb_fixnum_value(DLT_NULL));
   mrb_define_const(mrb, pcap, "DLT_EN10MB", mrb_fixnum_value(DLT_EN10MB));
@@ -273,11 +273,11 @@ mrb_mruby_pcap_gem_init(mrb_state *mrb)
 
   capt = mrb_define_class_under(mrb, pcap, "Capture", mrb->object_class);
   mrb_define_singleton_method(mrb, (struct RObject*)capt, "open_live", mrb_capture_open_live, MRB_ARGS_ARG(1, 3));
-  mrb_define_method(mrb, capt, "capture", capture, ARGS_NONE());
-  mrb_define_method(mrb, capt, "close", capture_close, ARGS_NONE());
-  mrb_define_method(mrb, capt, "datalink", capture_datalink, ARGS_NONE());
+  mrb_define_method(mrb, capt, "capture", capture, MRB_ARGS_NONE());
+  mrb_define_method(mrb, capt, "close", capture_close, MRB_ARGS_NONE());
+  mrb_define_method(mrb, capt, "datalink", capture_datalink, MRB_ARGS_NONE());
   mrb_define_method(mrb, capt, "inject", mrb_capture_inject, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, capt, "setfilter", capture_setfilter, ARGS_ANY());
+  mrb_define_method(mrb, capt, "setfilter", capture_setfilter, MRB_ARGS_ANY());
 }
 
 void
