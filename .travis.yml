@@ -1,3 +1,7 @@
 sudo: false
+addons:
+  apt:
+    packages:
+      - libpcap-dev
 script:
   - "ruby run_test.rb all test"
